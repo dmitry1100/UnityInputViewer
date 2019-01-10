@@ -1,0 +1,16 @@
+{
+    "name": "com.fiftytwo.InputViewer.Editor",
+    "references": [
+        "com.fiftytwo.InputViewer"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

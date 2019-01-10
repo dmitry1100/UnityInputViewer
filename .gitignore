@@ -1,0 +1,84 @@
+# OS generated trash
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+[Ee]hthumbs.db
+[Tt]humbs.db
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Oo]bj.meta
+[Ee]xportedObj/
+[Ee]xportedObj.meta
+[Bb]uild/
+[Bb]uild.meta
+[Dd]ebug/
+[Dd]ebug.meta
+[Dd]ebugPublic/
+[Dd]ebugPublic.meta
+[Rr]elease/
+[Rr]elease.meta
+
+# Unity generated temp folders
+/[Tt]emp/
+/[Tt]emp.meta
+/[Ll]ibrary/
+/[Ll]ibrary.meta
+/[Ll]ogs/
+/[Ll]ogs.meta
+
+# Unity generated project
+/*.csproj
+/*.csproj.meta
+/*.sln
+/*.sln.meta
+/*.unityproj
+/*.unityproj.meta
+/*.booproj
+/*.booproj.meta
+
+# User-specific and IDE generated files
+.vs/
+*.suo
+*.suo.meta
+*.user
+*.user.meta
+*.sln.docstates
+*.sln.docstates.meta
+*.userprefs
+*.userprefs.meta
+*.svd
+*.svd.meta
+*.pidb
+*.pidb.meta
+*.exe.stackdump
+*.exe.stackdump.meta
+*.dSYM
+*.dSYM.meta
+.gradle/
+sysinfo.txt
+sysinfo.txt.meta
+
+# VSCode plugin generated
+.vscode/launch.json
+.vscode/.*
+
+# NUnit test results
+/Assets/test-results
+/Assets/test-results.meta
+
+# Xcode
+xcuserdata/
+*.xccheckout
+
+/SwitchIL2CPPCache/
+/SwitchIL2CPPStats/
+
+HoudiniTemp/
+
+/AssetBundles/
+/Assets/StreamingAssets/bundles.meta
+/Assets/StreamingAssets/bundles/
