@@ -223,6 +223,9 @@ namespace Fiftytwo
         private Canvas _canvas;
         private GameObject _inputInfoGo;
         private Text _text;
+        private float _mouseScrollInactiveTime;
+        private Vector2 _mouseScrollDelta;
+        private Dictionary<int, Touch> _touches;
 
         static InputViewer ()
         {
@@ -263,6 +266,11 @@ namespace Fiftytwo
                 _axes[i].InactiveTime = _timeoutToHideInactiveAxesInput;
             }
 
+            _mouseScrollInactiveTime = _timeoutToHideInactiveAxesInput;
+
+            if( Input.touchSupported )
+                _touches = new Dictionary<int, Touch>();
+
             _canvas = gameObject.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             gameObject.AddComponent<CanvasScaler>();
@@ -298,36 +306,15 @@ namespace Fiftytwo
         {
             _sb.Length = 0;
 
-            int i;
-            for( i = 0; i < _axes.Length; ++i )
-            {
-                var axis = _axes[i];
-                var value = Input.GetAxis( axis.Name );
+            if( Input.mousePresent )
+                UpdateMouse();
 
-                if( Mathf.Approximately( value, axis.CurrentValue ) )
-                {
-                    if( axis.InactiveTime < _timeoutToHideInactiveAxesInput )
-                        axis.InactiveTime += Time.deltaTime;
-                }
-                else
-                {
-                    axis.CurrentValue = value;
-                    axis.InactiveTime = 0.0f;
-                }
+            if( Input.touchSupported )
+                UpdateTouches();
 
-                if( axis.InactiveTime < _timeoutToHideInactiveAxesInput )
-                {
-                    _sb.AppendLine( _axes[i].JoystickAxisName + " = " + value.ToString( "G3" ) );
-                }
-            }
+            UpdateKeys();
 
-            for( i = 0; i < _keyCodes.Length; ++i )
-            {
-                if( Input.GetKey( _keyCodes[i] ) )
-                {
-                    _sb.AppendLine( _keyCodes[i] );
-                }
-            }
+            UpdateAxes();
 
             if( _sb.Length > 0 )
             {
@@ -349,6 +336,121 @@ namespace Fiftytwo
             }
         }
 
+        private void UpdateMouse()
+        {
+            _sb.Append( "MOUSE: " );
+            _sb.Append( Input.mousePosition.ToString( "G3" ) );
+
+            if( Input.GetMouseButton( 0 ) )
+                _sb.Append( "; Key0" );
+            if( Input.GetMouseButton( 1 ) )
+                _sb.Append( "; Key1" );
+            if( Input.GetMouseButton( 2 ) )
+                _sb.Append( "; Key2" );
+            if( Input.GetMouseButton( 3 ) )
+                _sb.Append( "; Key3" );
+            if( Input.GetMouseButton( 4 ) )
+                _sb.Append( "; Key4" );
+            if( Input.GetMouseButton( 5 ) )
+                _sb.Append( "; Key5" );
+            if( Input.GetMouseButton( 6 ) )
+                _sb.Append( "; Key6" );
+
+            var scrollDelta = Input.mouseScrollDelta;
+            if( Mathf.Approximately( Vector2.SqrMagnitude( scrollDelta ), 0 ) )
+            {
+                _mouseScrollInactiveTime += Time.deltaTime;
+            }
+            else
+            {
+                _mouseScrollDelta = scrollDelta;
+                _mouseScrollInactiveTime = 0.0f;
+            }
+
+            if( _mouseScrollInactiveTime < _timeoutToHideInactiveAxesInput )
+            {
+                _sb.Append( "; Scroll: " );
+                _sb.Append( _mouseScrollDelta.ToString( "G3" ) );
+            }
+
+            _sb.AppendLine();
+        }
+
+        private void UpdateTouches ()
+        {
+            for( int i = 0; i < Input.touchCount; ++i )
+            {
+                var touch = Input.GetTouch( i );
+
+                _sb.Append( "TOUCH#" );
+                _sb.Append( i );
+                _sb.Append( ": id=" );
+                _sb.Append( touch.fingerId );
+                _sb.Append( "; alt=" );
+                _sb.Append( touch.altitudeAngle.ToString( "G3" ) );
+                _sb.Append( "; az=" );
+                _sb.Append( touch.azimuthAngle.ToString( "G3" ) );
+                _sb.Append( "; mpp=" );
+                _sb.Append( touch.maximumPossiblePressure.ToString( "G3" ) );
+                _sb.Append( "; ph=" );
+                _sb.Append( touch.phase );
+                _sb.Append( "; pr=" );
+                _sb.Append( touch.pressure.ToString( "G3" ) );
+                _sb.Append( "; r=" );
+                _sb.Append( touch.radius.ToString( "G3" ) );
+                _sb.Append( "; rv=" );
+                _sb.Append( touch.radiusVariance.ToString( "G3" ) );
+                _sb.Append( "; rp=" );
+                _sb.Append( touch.rawPosition.ToString( "G3" ) );
+                _sb.Append( "; tc=" );
+                _sb.Append( touch.tapCount );
+                _sb.Append( "; ty=" );
+                _sb.Append( touch.type );
+                _sb.Append( "; p=" );
+                _sb.Append( touch.position.ToString( "G3" ) );
+                _sb.Append( "; dp=" );
+                _sb.Append( touch.deltaPosition.ToString( "G3" ) );
+                _sb.Append( "; dt=" );
+                _sb.Append( touch.deltaTime.ToString( "G3" ) );
+                _sb.AppendLine();
+           }
+        }
+
+        private void UpdateKeys ()
+        {
+            for( int i = 0; i < _keyCodes.Length; ++i )
+            {
+                if( Input.GetKey( _keyCodes[i] ) )
+                {
+                    _sb.AppendLine( "KEY: " + _keyCodes[i] );
+                }
+            }
+        }
+
+        private void UpdateAxes ()
+        {
+            for( int i = 0; i < _axes.Length; ++i )
+            {
+                var axis = _axes[i];
+                var value = Input.GetAxis( axis.Name );
+
+                if( Mathf.Approximately( value, axis.CurrentValue ) )
+                {
+                    if( axis.InactiveTime < _timeoutToHideInactiveAxesInput )
+                        axis.InactiveTime += Time.deltaTime;
+                }
+                else
+                {
+                    axis.CurrentValue = value;
+                    axis.InactiveTime = 0.0f;
+                }
+
+                if( axis.InactiveTime < _timeoutToHideInactiveAxesInput )
+                {
+                    _sb.AppendLine( _axes[i].JoystickAxisName + " = " + value.ToString( "G3" ) );
+                }
+            }
+        }
 #endif
     }
 }
